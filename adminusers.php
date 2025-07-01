@@ -135,7 +135,7 @@ require_once "dbconn.php";
                                     echo "<td>" . htmlspecialchars($row['role']) . "</td>";
                                     echo '<td align="center">
                                             <a href="#" 
-                                                class="btn btn-sm btn-success" 
+                                                class="btn btn-sm btn-secondary" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#viewUserModal"
                                                 data-fullname="' . htmlspecialchars($row['lastname'] . ', ' . $row['firstname'] . ' ' . $row['middlename']) .'"
@@ -154,17 +154,16 @@ require_once "dbconn.php";
                                                 data-lastname="'. htmlspecialchars($row['lastname']).'"
                                                 data-middlename="'. htmlspecialchars($row['middlename']).'"
                                                 data-role='. htmlspecialchars($row['role']).'
-                                                data-username="'. htmlspecialchars($row['username']).'"
-                                                data-password="'. htmlspecialchars($row['password']).'">
+                                                data-username="'. htmlspecialchars($row['username']).'">
                                                     <i class="bi bi-pencil text-white"></i>
                                             </button>
                                             <button 
                                                 type="button"
-                                                class="btn btn-sm btn-secondary"
+                                                class="btn btn-sm btn-success"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#archiveModal" 
                                                 onclick="document.getElementById(\'archiveUserId\').value = ' . $row['user_id'] . '">
-                                                <i class="bi bi-archive"></i>
+                                                <i class="bi bi-toggle-on"></i>
                                             </button>
                                         </td>';
 
@@ -320,17 +319,17 @@ require_once "dbconn.php";
             <form method="POST" action="deleteuser.php">
                 <div class="modal-content">
                     <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="archiveModalLabel">Confirm Archive</h5>
+                        <h5 class="modal-title" id="archiveModalLabel">Confirm Deactivate</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to archive this user?
+                        Are you sure you want to deactivate this user?
                         <input type="hidden" name="user_id" id="archiveUserId">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Yes, Archive</button>
+                        <button type="submit" class="btn btn-danger">Deactivate</button>
                     </div>
                 </div>
             </form>
@@ -404,7 +403,7 @@ require_once "dbconn.php";
                         <div class="col-md-3">
                             <label class="form-label">Password</label>
                             <label class="input-group">
-                                <input type="password" class="form-control" name="password" id="editPassword" required>
+                                <input type="password" class="form-control" name="password" id="editPassword">
                                 <button class="btn btn-outline-secondary" type="button" id="togglePass">
                                     <i class="bi bi-eye-fill"></i>
                                 </button>

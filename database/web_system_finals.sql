@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2025 at 08:27 PM
+-- Generation Time: Jun 28, 2025 at 09:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -149,17 +149,21 @@ CREATE TABLE `opd_records` (
   `weight` varchar(20) DEFAULT NULL,
   `height` varchar(20) DEFAULT NULL,
   `fullname_signature` varchar(255) DEFAULT NULL,
-  `relationship` varchar(100) DEFAULT NULL
+  `relationship` varchar(100) DEFAULT NULL,
+  `history_of_present_illness` varchar(200) DEFAULT NULL,
+  `impressions_diagnosis` varchar(200) DEFAULT NULL,
+  `treatment_medications` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `opd_records`
 --
 
-INSERT INTO `opd_records` (`id`, `patient_id`, `date_time`, `attending_physician`, `chief_complaint`, `bp`, `pr`, `rr`, `temp`, `weight`, `height`, `fullname_signature`, `relationship`) VALUES
-(1, 29, '2025-06-21 18:58:00', 'test', 'test', '101', '101', '101', '101', '45', '1.56', 'test', 'test'),
-(2, 29, '2025-06-21 19:08:00', 'test2', 'test2', '101', '101', '101', '101', '45', '1.56', 'test2', 'test2'),
-(3, 32, '2025-06-21 19:35:00', 'test', 'test', '101', '101', '101', '101', '45', '1.56', NULL, NULL);
+INSERT INTO `opd_records` (`id`, `patient_id`, `date_time`, `attending_physician`, `chief_complaint`, `bp`, `pr`, `rr`, `temp`, `weight`, `height`, `fullname_signature`, `relationship`, `history_of_present_illness`, `impressions_diagnosis`, `treatment_medications`) VALUES
+(1, 29, '2025-06-21 18:58:00', 'test', 'test', '101', '101', '101', '101', '45', '1.56', 'test', 'test', NULL, NULL, NULL),
+(2, 29, '2025-06-21 19:08:00', 'test2', 'test2', '101', '101', '101', '101', '45', '1.56', 'test2', 'test2', NULL, NULL, NULL),
+(3, 32, '2025-06-21 19:35:00', 'test', 'test', '101', '101', '101', '101', '45', '1.56', NULL, NULL, NULL, NULL, NULL),
+(4, 29, '2025-06-27 18:20:00', 'test', 'test2', '101', '101', '101', '101', '45', '1.56', NULL, NULL, 'test', 'test', 'test');
 
 -- --------------------------------------------------------
 
@@ -196,7 +200,8 @@ INSERT INTO `patients` (`patient_id`, `last_name`, `middle_name`, `first_name`, 
 (37, 'Carlos', '', 'Juan', 'Male', '2000-02-10', 'Sample', '25', '0969694646', 'sample@gmail.com', 'Sample Address', '2025-05-13 15:04:23', 'Married', 'Sample', 'Sample', 'Sample'),
 (45, 'Sample', '', 'Sample', 'Female', '2005-11-09', 'Sample', '19', NULL, 'sample@gmail.com', 'Sample', '2025-05-14 01:38:30', 'Single', 'Sample', 'Sample', 'Sample'),
 (47, 'Test', 'Test', 'Test', 'Female', '2025-05-13', 'Test', '0', NULL, '', 'Testingggg', '2025-06-17 10:14:31', 'Single', 'Test', 'Test', ''),
-(48, 'Sample', '', 'Sample', 'Male', '2022-06-08', '', '2', NULL, 'sample@gmail.com', '', '2025-06-17 10:14:34', 'Single', '', '', '');
+(48, 'Sample', '', 'Sample', 'Male', '2022-06-08', '', '2', NULL, 'sample@gmail.com', '', '2025-06-17 10:14:34', 'Single', '', '', ''),
+(49, 'sasdsad', 'asdasdasd', 'tetete', 'Male', '2025-06-03', 'asdasdasd', '0', '', '', 'asdasdasda', '2025-06-27 13:50:20', 'Single', 'asdasdasd', 'asdsadsad', 'asdasdasd');
 
 -- --------------------------------------------------------
 
@@ -356,13 +361,13 @@ ALTER TABLE `audit_logs`
 -- AUTO_INCREMENT for table `opd_records`
 --
 ALTER TABLE `opd_records`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `users`

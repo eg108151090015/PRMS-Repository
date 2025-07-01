@@ -31,14 +31,12 @@ $dob_str = $dob->format('Y-m-d');
 
 // Check if updating or inserting
 if (!empty($patient_id)) {
-    // Check if patient exists
     $check = $conn->prepare("SELECT patient_id FROM patients WHERE patient_id = ?");
     $check->bind_param("i", $patient_id);
     $check->execute();
     $result = $check->get_result();
 
     if ($result->num_rows > 0) {
-        // ✅ Update existing record
         $query = $conn->prepare("
             UPDATE patients SET 
                 first_name=?, last_name=?, middle_name=?, 
@@ -53,6 +51,14 @@ if (!empty($patient_id)) {
         );
 
         if ($query->execute()) {
+            // Insert log BEFORE exit
+            $user_id = $_SESSION['user_id'];
+            $fullName = $last . ' ' . $first . ' ' . $middle;
+            $action = "Edited patient information (ID: $patient_id, Name: $fullName)";
+            $stmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+            $stmt->bind_param("is", $user_id, $action);
+            $stmt->execute();
+
             header("Location: viewpatient.php?patient_id=" . $patient_id . "&status=updated");
             exit();
         } else {
@@ -61,7 +67,7 @@ if (!empty($patient_id)) {
     }
 }
 
-// ✅ Insert new record
+// Insert new record
 $query = $conn->prepare("
     INSERT INTO patients (
         first_name, last_name, middle_name, address, age, 
@@ -77,6 +83,15 @@ $query->bind_param("ssssisssssssss",
 
 if ($query->execute()) {
     $new_patient_id = $conn->insert_id;
+
+    // Log before exit
+    $user_id = $_SESSION['user_id'];
+    $fullName = $last . ' ' . $first . ' ' . $middle;
+    $action = "Added new patient (ID: $new_patient_id, Name: $fullName)";
+    $stmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+    $stmt->bind_param("is", $user_id, $action);
+    $stmt->execute();
+
     header("Location: viewpatient.php?patient_id=" . $new_patient_id . "&status=added");
     exit();
 } else {

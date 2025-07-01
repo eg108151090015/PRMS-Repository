@@ -1,100 +1,125 @@
 <?php
 session_start();
-if (!isset($_SESSION["username"])) {
+require_once "dbconn.php";
+
+// Check if logged in
+if (!isset($_SESSION["username"], $_SESSION["user_id"])) {
     header("Location: loginpage.php");
     exit();
 }
 
-require_once "dbconn.php";
+$log_user_id = $_SESSION['user_id']; // The logged-in user doing the action
 
-// Check if POST data is received
-/* if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $last_name = $_POST["lastname"];
-    $first_name = $_POST["firstname"];
-    $middle_name = $_POST["middlename"];
-    $username = $_POST["username"];
-    $password = $_POST["password"];
-    $role = $_POST["role"];
+// Collect POST data safely
+$user_id   = $_POST['user_id'] ?? null;
+$last      = trim($_POST["lastname"] ?? '');
+$first     = trim($_POST["firstname"] ?? '');
+$middle    = trim($_POST["middlename"] ?? '');
+$username  = trim($_POST["username"] ?? '');
+$password  = $_POST["password"] ?? '';
+$role      = $_POST["role"] ?? '';
 
-    // Prepare and execute SQL
-    $stmt = $conn->prepare("INSERT INTO users (lastname, firstname, middlename, username, password, role, created_at) 
-                            VALUES (?, ?, ?, ?, ?, ?, NOW())");
+$fullName = $last . ' ' . $first . ' ' . $middle;
 
-    $stmt->bind_param("ssssss", $last_name, $first_name, $middle_name, $username, $password, $role);
-
-    if ($stmt->execute()) {
-        $_SESSION['success_message'] = "User added successfully!";
-        header("Location: adminusers.php");
-        exit();
-    } else {
-        echo "Error: " . $stmt->error;
-    }
-
-    $stmt->close();
-    $conn->close();
+// Check for duplicate username (whether inserting or updating)
+if (empty($user_id)) {
+    $checkUser = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
+    $checkUser->bind_param("s", $username);
 } else {
-    // If accessed without POST
+    $checkUser = $conn->prepare("SELECT user_id FROM users WHERE username = ? AND user_id != ?");
+    $checkUser->bind_param("si", $username, $user_id);
+}
+$checkUser->execute();
+$checkUser->store_result();
+
+if ($checkUser->num_rows > 0) {
+    $_SESSION['message'] = "Username already exists!";
     header("Location: adduser.php");
     exit();
 }
-*/
 
-// Collect POST data safely
-$user_id    = $_POST['user_id'] ?? null;
-$last       = $_POST["lastname"] ?? '';
-$first      = $_POST["firstname"] ?? '';
-$middle     = $_POST["middlename"] ?? '';
-$username   = $_POST["username"] ?? '';
-$password   = $_POST["password"] ?? '';
-$role       = $_POST["role"] ?? '';
-
-
-// Check if updating or inserting
+// ---------------------
+// Update Existing User
+// ---------------------
 if (!empty($user_id)) {
-    // Check if patient exists
+    // Check if user exists
     $check = $conn->prepare("SELECT user_id FROM users WHERE user_id = ?");
     $check->bind_param("i", $user_id);
     $check->execute();
     $result = $check->get_result();
 
     if ($result->num_rows > 0) {
-        // ✅ Update existing record
-        $query = $conn->prepare("
-            UPDATE users SET 
-                firstname=?, lastname=?, middlename=?, username=?, password=?, role=?
-            WHERE user_id=?
-        ");
-
-        $query->bind_param("ssssssi", 
-            $first, $last, $middle, $username, $password, $role, $user_id
-        );
+        // Update
+        if (!empty($password)) {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $query = $conn->prepare("
+                UPDATE users SET 
+                    firstname = ?, lastname = ?, middlename = ?, username = ?, password = ?, role = ?
+                WHERE user_id = ?
+            ");
+            $query->bind_param("ssssssi", $first, $last, $middle, $username, $hashedPassword, $role, $user_id);
+        } else {
+            $query = $conn->prepare("
+                UPDATE users SET 
+                    firstname = ?, lastname = ?, middlename = ?, username = ?, role = ?
+                WHERE user_id = ?
+            ");
+            $query->bind_param("sssssi", $first, $last, $middle, $username, $role, $user_id);
+        }
 
         if ($query->execute()) {
+            // Log update
+            $action = "Updated user account (ID: $user_id, Name: $fullName, Role: $role)";
+            $logStmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+            $logStmt->bind_param("is", $log_user_id, $action);
+            $logStmt->execute();
+
+            $_SESSION['message'] = "User updated successfully.";
             header("Location: adminusers.php");
             exit();
         } else {
             echo "Error updating record: " . $conn->error;
+            exit();
         }
+    } else {
+        $_SESSION['message'] = "User not found.";
+        header("Location: adminusers.php");
+        exit();
     }
 }
 
-// ✅ Insert new record
+// ---------------------
+// Insert New User
+// ---------------------
+if (empty($password)) {
+    $_SESSION['message'] = "Password is required.";
+    header("Location: adduser.php");
+    exit();
+}
+
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
 $query = $conn->prepare("
     INSERT INTO users (
         firstname, lastname, middlename, username, password, role
     ) VALUES (?, ?, ?, ?, ?, ?)
 ");
-
-$query->bind_param("ssssss", 
-    $first, $last, $middle, $username, $password, $role
-);
+$query->bind_param("ssssss", $first, $last, $middle, $username, $hashedPassword, $role);
 
 if ($query->execute()) {
-    $new_patient_id = $conn->insert_id;
+    $new_user_id = $conn->insert_id;
+
+    // Log insert
+    $action = "Added new user account (ID: $new_user_id, Name: $fullName, Role: $role)";
+    $logStmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+    $logStmt->bind_param("is", $log_user_id, $action);
+    $logStmt->execute();
+
+    $_SESSION['message'] = "User added successfully.";
     header("Location: adminusers.php");
     exit();
 } else {
     echo "Error inserting record: " . $query->error;
+    exit();
 }
 ?>
-

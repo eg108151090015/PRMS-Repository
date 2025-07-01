@@ -12,7 +12,7 @@
     <!-- Header -->
     <div class="text-center mb-2">
         <a href="staffdash.php" class="text-decoration-none">
-            <img src="pictures/hospital.png" alt="Hospital Logo" width="100" height="120">
+            <img src="pictures/logo_hospital.png" alt="Hospital Logo" width="120" height="120">
         </a>
     </div>
 

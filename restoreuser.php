@@ -50,6 +50,15 @@ $delete = $conn->prepare("DELETE FROM archived_users WHERE user_id = ?");
 $delete->bind_param("i", $user_id);
 $delete->execute();
 
+$log_user_id = $_SESSION['user_id'];
+$target_user_name = $archived['lastname'] . ' ' . $archived['firstname'] . ' ' . $archived['middlename'];
+$target_user_id = $archived['user_id'];
+
+$action = "Activated user account (ID: $target_user_id, Name: $target_user_name)";
+$stmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+$stmt->bind_param("is", $log_user_id, $action);
+$stmt->execute();
+
 // Redirect back to archived users page
 header("Location: archiveduser.php");
 exit();

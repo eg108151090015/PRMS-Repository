@@ -103,7 +103,7 @@ if (!isset($_SESSION["username"])) {
                             <i class="bi bi-printer-fill fs-1 text-primary mb-3"></i>
                             <h5 class="card-title">Print Patients List</h5>
                             <p class="card-text">Generate and print a full list of all registered patients.</p>
-                            <a href="staffprint_allpatients.php" class="btn btn-primary">
+                            <a href="opd.php" class="btn btn-primary">
                                 <i class="bi bi-printer"></i> Print</a>
                         </div>
                     </div>

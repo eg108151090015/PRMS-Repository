@@ -84,7 +84,7 @@ $record = mysqli_fetch_assoc($res_sql);
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <img src="pictures/hospital.png" class="header-logo" alt="Hospital Logo">
+        <img src="pictures/logo_hospital.png" class="header-logo" alt="Hospital Logo">
         <div class="hospital-info">
             <h5>PATIENT RECORD MANAGEMENT SYSTEM</h5>
             <p>Sample Place, Sample City<br>Tel: (012) 345-6789</p>

@@ -60,7 +60,15 @@ $delete = $conn->prepare("DELETE FROM archived_patients WHERE patient_id = ?");
 $delete->bind_param("i", $patient_id);
 $delete->execute();
 
+$user_id = $_SESSION['user_id'];
+$fullName = $archived['last_name'] . ' ' . $archived['first_name'] . ' ' . $archived['middle_name'];
+$action = "Restored patient information (ID: $patient_id, Name: $fullName)";
+$stmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+$stmt->bind_param("is", $user_id, $action);
+$stmt->execute();
+
 // Redirect back to archived patients page
 header("Location: archivedpatient.php");
 exit();
+
 ?>

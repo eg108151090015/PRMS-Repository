@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id'])) {
         $user['middlename'],
         $user['lastname'],
         $user['role'],
-        $user['username'],  
+        $user['username'],
         $user['password']
     );
 
@@ -45,6 +45,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id'])) {
     $delete = $conn->prepare("DELETE FROM users WHERE user_id = ?");
     $delete->bind_param("i", $user_id);
     $delete->execute();
+
+    $target_user_id = $user['user_id'];
+    $fullName = $user['lastname'] . ' ' . $user['firstname'] . ' ' . $user['middlename'];
+    $action = "Deactivated user account (ID: $target_user_id, Name: $fullName)";
+    $log_user_id = $_SESSION['user_id'];
+
+    $stmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+    $stmt->bind_param("is", $log_user_id, $action);
+    $stmt->execute();
 
     $_SESSION['message'] = "User archived successfully.";
     header("Location: adminusers.php");

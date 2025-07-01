@@ -93,7 +93,7 @@ require_once "dbconn.php";
                 <!-- Table Title -->
                 <div
                     class="card-header bg-patient-header text-white d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <h4 class="mb-0">Archived User Records</h4>
+                    <h4 class="mb-0">Deactivated User Records</h4>
                     <div class="d-flex gap-2">
                         <input type="text" class="form-control search-box" id="searchInput"
                             placeholder="Search users...">
@@ -110,7 +110,7 @@ require_once "dbconn.php";
                                 <th>First Name</th>
                                 <th>Middle Name</th>
                                 <th>Role</th>
-                                <th>Archived At</th>
+                                <th>Deactivated At</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -130,8 +130,8 @@ require_once "dbconn.php";
                         
                                 // Restore button with modal trigger
                                 echo '<td>
-                                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#restoreModal' . $row['user_id'] . '">
-                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                        <button class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#restoreModal' . $row['user_id'] . '">
+                                            <i class="bi bi-toggle-off"></i>
                                         </button>
                                       </td>';
                                 echo "</tr>";
@@ -147,12 +147,12 @@ require_once "dbconn.php";
                                             </div>
 
                                             <div class="modal-body">
-                                                Are you sure you want to restore <strong>' . htmlspecialchars($row['firstname']) . ' ' . htmlspecialchars($row['lastname']) . '</strong>?
+                                                Are you sure you want to activate <strong>' . htmlspecialchars($row['firstname']) . ' ' . htmlspecialchars($row['lastname']) . '</strong>?
                                             </div>
                         
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <a href="restoreuser.php?user_id=' . $row['user_id'] . '" class="btn btn-success">Restore</a>
+                                                <a href="restoreuser.php?user_id=' . $row['user_id'] . '" class="btn btn-success">Activate</a>
                                             </div>
                                         </div>
                                     </div>

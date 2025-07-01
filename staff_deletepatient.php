@@ -57,6 +57,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['patient_id'])) {
     $delete->bind_param("i", $patient_id);
     $delete->execute();
 
+    if (!isset($_SESSION['user_id'])) {
+        $_SESSION['message'] = "User session expired. Please log in again.";
+        header("Location: loginpage.php");
+        exit();
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $fullName = $patient['last_name'] . ' ' . $patient['first_name'] . ' ' . $patient['middle_name'];
+    $action = "Archived patient record (ID: $patient_id, Name: $fullName)";
+    $stmt = $conn->prepare("INSERT INTO user_logs (user_id, action) VALUES (?, ?)");
+    $stmt->bind_param("is", $user_id, $action);
+    $stmt->execute();
+
     $_SESSION['message'] = "Patient archived successfully.";
     header("Location: staffpatient.php");
     exit();

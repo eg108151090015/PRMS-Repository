@@ -11,7 +11,7 @@
     <!-- Header -->
     <div class="text-center mb-2">
         <a href="admindash.php" class="text-decoration-none">
-            <img src="pictures/hospital.png" alt="Hospital Logo" width="100" height="120">
+            <img src="pictures/logo_hospital.png" alt="Hospital Logo" width="120" height="120">
         </a>
     </div>
 
@@ -53,7 +53,7 @@
                 aria-labelledby="userDropdown">
                 <li><a class="dropdown-item" href="adminusers.php">View Users</a></li>
                 <li><a class="dropdown-item" href="adminusers.php?add=true">Add User</a></li>
-                <li><a class="dropdown-item" href="archiveduser.php">Archived Users</a></li>
+                <li><a class="dropdown-item" href="archiveduser.php">Deactivated Users</a></li>
             </ul>
         </li>
 
@@ -63,6 +63,14 @@
                 <i class="bi bi-clipboard-fill me-2"></i> Reports
             </a>
         </li>
+
+        <!-- Logs -->
+        <li>
+            <a href="adminlogs.php" class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) === 'adminlogs.php' ? 'active' : '' ?>">
+                <i class="bi bi-file-earmark-text me-2"></i> Logs
+            </a>
+        </li>
+
     </ul>
     <hr>
 
