@@ -79,11 +79,30 @@ require_once "dbconn.php";
         margin-top: 0;
     }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
 
     <?php include 'sidebar.php'; ?>
+
+    <?php if (isset($_GET['status'])): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                <?php if ($_GET['status'] === 'updated'): ?>
+                    <?php elseif ($_GET['status'] === 'activated'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'User Activated',
+                        text: 'The user has been successfully reactivated.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php endif; ?>
+            });
+        </script>
+    <?php endif; ?>
 
     <!-- Main content -->
     <div class="content">
@@ -167,19 +186,45 @@ require_once "dbconn.php";
         </div>
     </div>
 
-    <!-- JavaScript -->
+    <!-- Search functionality -->
     <script>
-    const searchInput = document.getElementById("searchInput");
-    const tableRows = document.querySelectorAll("#userTable tr");
+        const searchInput = document.getElementById('searchInput');
+        const rows = document.querySelectorAll('#userTable tr');
 
-    searchInput.addEventListener("keyup", function() {
-        const query = this.value.toLowerCase();
-        tableRows.forEach(row => {
-            const rowText = row.innerText.toLowerCase();
-            row.style.display = rowText.includes(query) ? "" : "none";
+        // Save the original HTML of each row
+        const rowCache = new Map();
+        rows.forEach((row, index) => {
+            rowCache.set(index, row.innerHTML);
         });
-    });
+
+        searchInput.addEventListener('input', function () {
+            const query = this.value.toLowerCase().trim();
+
+            rows.forEach((row, index) => {
+                row.innerHTML = rowCache.get(index); // Reset original content
+                const cells = row.cells;
+
+                let rowText = '';
+                for (let i = 0; i < cells.length - 1; i++) { // Exclude Actions column
+                    rowText += cells[i].textContent.toLowerCase() + ' ';
+                }
+
+                const match = rowText.includes(query);
+                row.style.display = match ? '' : 'none';
+
+                // Highlight match in all but last column
+                if (match && query) {
+                    for (let i = 0; i < cells.length - 1; i++) {
+                        const cell = cells[i];
+                        const originalText = cell.textContent;
+                        const regex = new RegExp(`(${query})`, 'gi');
+                        cell.innerHTML = originalText.replace(regex, '<mark>$1</mark>');
+                    }
+                }
+            });
+        });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

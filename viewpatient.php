@@ -101,6 +101,150 @@ $admission = $admission_result->fetch_assoc(); // Will be false if no record exi
         
     <?php include 'main_content_view_record.php'; ?>
 
+    <!-- Edit Patient Modal -->
+    <div class="modal fade" id="editPatientModal" tabindex="-1" aria-labelledby="editPatientModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form action="savepatient.php" method="post">
+                    <div class="modal-header bg-custom text-white">
+                        <h5 class="modal-title" id="editPatientModalLabel">Edit Patient Information</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="patient_id" value="<?= $patient_id ?>">
+                        <div class="row">
+
+                            <!-- First Name -->
+                            <div class="col-md-4 mb-3">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" name="first_name"
+                                    value="<?= htmlspecialchars($patient['first_name']) ?>" required>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="col-md-4 mb-3">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" name="last_name"
+                                    value="<?= htmlspecialchars($patient['last_name']) ?>" required>
+                            </div>
+
+                            <!-- Middle Name -->
+                            <div class="col-md-4 mb-3">
+                                <label for="middle_name" class="form-label">Middle Name</label>
+                                <input type="text" class="form-control" name="middle_name"
+                                    value="<?= htmlspecialchars($patient['middle_name']) ?>">
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-md-6 mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input type="text" class="form-control" name="address"
+                                    value="<?= htmlspecialchars($patient['address']) ?>">
+                            </div>
+
+                            <!-- Age -->
+                            <div class="col-md-2 mb-3">
+                                <label for="age" class="form-label">Age</label>
+                                <input type="number" class="form-control" name="age"
+                                    value="<?= htmlspecialchars($patient['age']) ?>">
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="col-md-4 mb-3">
+                                <label for="date_of_birth" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" name="date_of_birth"
+                                    value="<?= htmlspecialchars($patient['date_of_birth']) ?>">
+                            </div>
+
+                            <!-- Birth Place -->
+                            <div class="col-md-4 mb-3">
+                                <label for="birth_place" class="form-label">Birth Place</label>
+                                <input type="text" class="form-control" name="birth_place"
+                                    value="<?= htmlspecialchars($patient['birth_place']) ?>">
+                            </div>
+
+                            <!-- Nationality -->
+                            <div class="col-md-4 mb-3">
+                                <label for="nationality" class="form-label">Nationality</label>
+                                <input type="text" class="form-control" name="nationality"
+                                    value="<?= htmlspecialchars($patient['nationality']) ?>">
+                            </div>
+
+                            <!-- Religion -->
+                            <div class="col-md-4 mb-3">
+                                <label for="religion" class="form-label">Religion</label>
+                                <input type="text" class="form-control" name="religion"
+                                    value="<?= htmlspecialchars($patient['religion']) ?>">
+                            </div>
+
+                            <!-- Occupation -->
+                            <div class="col-md-6 mb-3">
+                                <label for="occupation" class="form-label">Occupation</label>
+                                <input type="text" class="form-control" name="occupation"
+                                    value="<?= htmlspecialchars($patient['occupation']) ?>">
+                            </div>
+
+                            <!-- Civil Status -->
+                            <div class="col-md-3 mb-3">
+                                <label for="civil_status" class="form-label">Civil Status</label>
+                                <select class="form-select" name="civil_status">
+                                    <option value="Single"
+                                        <?= $patient['civil_status'] == 'Single' ? 'selected' : '' ?>>
+                                        Single</option>
+                                    <option value="Married"
+                                        <?= $patient['civil_status'] == 'Married' ? 'selected' : '' ?>>
+                                        Married</option>
+                                    <option value="Widowed"
+                                        <?= $patient['civil_status'] == 'Widowed' ? 'selected' : '' ?>>
+                                        Widowed</option>
+                                    <option value="Separated"
+                                        <?= $patient['civil_status'] == 'Separated' ? 'selected' : '' ?>>
+                                        Separated</option>
+                                    <option value="Divorced"
+                                        <?= $patient['civil_status'] == 'Divorced' ? 'selected' : '' ?>>
+                                        Divorced</option>
+                                </select>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-3 mb-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-select" name="gender">
+                                    <option value="Male" <?= $patient['gender'] == 'Male' ? 'selected' : '' ?>>Male
+                                    </option>
+                                    <option value="Female" <?= $patient['gender'] == 'Female' ? 'selected' : '' ?>>
+                                        Female</option>
+                                    <option value="Other" <?= $patient['gender'] == 'Other' ? 'selected' : '' ?>>
+                                        Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Contact Number -->
+                            <div class="col-md-6 mb-3">
+                                <label for="contact_number" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" name="contact_number"
+                                    value="<?= htmlspecialchars($patient['contact_number']) ?>">
+                            </div>
+
+                            <!-- Email Address -->
+                            <div class="col-md-6 mb-3">
+                                <label for="email_address" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" name="email_address"
+                                    value="<?= htmlspecialchars($patient['email_address']) ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="buttons.js"></script>

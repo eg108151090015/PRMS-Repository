@@ -68,7 +68,7 @@ $stmt->bind_param("is", $user_id, $action);
 $stmt->execute();
 
 // Redirect back to archived patients page
-header("Location: archivedpatient.php");
+header("Location: archivedpatient.php?status=restored&patient_id=" . $patient_id);
 exit();
 
 ?>

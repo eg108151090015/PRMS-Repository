@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['patient_id'])) {
     $stmt->execute();
 
     $_SESSION['message'] = "Patient archived successfully.";
-    header("Location: adminpatient.php");
+    header("Location: adminpatient.php?status=archived&patient_id=" . $patient_id);
     exit();
 }
 

@@ -79,11 +79,31 @@ require_once "dbconn.php";
         margin-top: 0;
     }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
 
     <?php include 'sidebar_staff.php'; ?>
+
+    <?php if (isset($_GET['status'])): ?>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                <?php if ($_GET['status'] === 'restored'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Patient Restored',
+                        text: 'The patient has been successfully restored.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php endif; ?>
+            });
+        </script>
+    <?php endif; ?>
 
     <!-- Main content -->
     <div class="content">
@@ -175,20 +195,42 @@ require_once "dbconn.php";
         </div>
     </div>
 
-
-    <!-- JavaScript -->
+    <!-- Search functionality -->
     <script>
-    const searchInput = document.getElementById("searchInput");
-    const tableRows = document.querySelectorAll("#patientTable tr");
+        const searchInput = document.getElementById("searchInput");
+        const tableRows = document.querySelectorAll("#patientTable tr");
 
-    searchInput.addEventListener("keyup", function() {
-        const query = this.value.toLowerCase();
-        tableRows.forEach(row => {
-            const rowText = row.innerText.toLowerCase();
-            row.style.display = rowText.includes(query) ? "" : "none";
+        // Store original HTML per row (for resetting)
+        const rowMap = new Map();
+        tableRows.forEach((row, index) => {
+            rowMap.set(index, row.innerHTML);
         });
-    });
+
+        searchInput.addEventListener("input", function () {
+            const query = this.value.toLowerCase().trim();
+
+            tableRows.forEach((row, index) => {
+                // Reset to original content before highlighting
+                row.innerHTML = rowMap.get(index);
+
+                const rowText = row.innerText.toLowerCase();
+                const match = rowText.includes(query);
+
+                row.style.display = match ? "" : "none";
+
+                // Optional: highlight matches in all cells except the last (actions)
+                if (match && query) {
+                    Array.from(row.cells).forEach((cell, i) => {
+                        if (i === row.cells.length - 1) return; // skip Actions column
+                        const originalText = cell.textContent;
+                        const regex = new RegExp(`(${query})`, 'gi');
+                        cell.innerHTML = originalText.replace(regex, `<mark>$1</mark>`);
+                    });
+                }
+            });
+        });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

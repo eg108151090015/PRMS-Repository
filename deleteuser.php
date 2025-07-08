@@ -42,9 +42,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id'])) {
 
     $archive->execute();
 
-    $delete = $conn->prepare("DELETE FROM users WHERE user_id = ?");
-    $delete->bind_param("i", $user_id);
-    $delete->execute();
+    //$delete = $conn->prepare("DELETE FROM users WHERE user_id = ?");
+    //$delete->bind_param("i", $user_id);
+    //$delete->execute();
+
+    $status = $conn->prepare("UPDATE users SET status = 'inactive' WHERE user_id = ?");
+    $status->bind_param("i", $user_id);
+    $status->execute();
 
     $target_user_id = $user['user_id'];
     $fullName = $user['lastname'] . ' ' . $user['firstname'] . ' ' . $user['middlename'];
@@ -56,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['user_id'])) {
     $stmt->execute();
 
     $_SESSION['message'] = "User archived successfully.";
-    header("Location: adminusers.php");
+    header("Location: adminusers.php?status=deactivated");
     exit();
 }
 

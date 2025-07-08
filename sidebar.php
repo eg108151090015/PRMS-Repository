@@ -15,7 +15,11 @@
         </a>
     </div>
 
-    <hr>
+    <!-- User Information -->
+    <div class="text-center mb-3 border-top pt-2">
+        <strong><?php echo $_SESSION["name"]; ?></strong><br>
+        <small class="text-white-50"><?php echo ucfirst($_SESSION["role"]); ?></small>
+    </div>
 
     <!-- Label Buttons -->
     <ul class="nav nav-pills flex-column mb-auto">

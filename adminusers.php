@@ -25,69 +25,111 @@ require_once "dbconn.php";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-    body {
-        overflow-x: hidden;
-        background-color: #f2f2f2;
-    }
+        body {
+            overflow-x: hidden;
+            background-color: #f2f2f2;
+        }
 
-    /* Navbar styling */
-    .bg-custom {
-        background-color: #3498db !important;
-    }
+        /* Navbar styling */
+        .bg-custom {
+            background-color: #3498db !important;
+        }
 
-    /* Sidebar styling */
-    .bg-sidebar-custom {
-        background-color: rgb(52, 52, 65) !important;
-    }
+        /* Sidebar styling */
+        .bg-sidebar-custom {
+            background-color: rgb(52, 52, 65) !important;
+        }
 
-    .nav-link {
-        color: white;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
+        .nav-link {
+            color: white;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-    .nav-link:hover {
-        background-color: rgb(25, 90, 134);
-        color: white;
-    }
+        .nav-link:hover {
+            background-color: rgb(25, 90, 134);
+            color: white;
+        }
 
-    .nav-link.active {
-        background-color: white !important;
-        color: black !important;
-        font-weight: bold;
-    }
+        .nav-link.active {
+            background-color: white !important;
+            color: black !important;
+            font-weight: bold;
+        }
 
-    .content {
-        margin-left: 250px;
-        padding: 90px 20px 20px 20px;
-        /* leaves space for navbar */
-    }
+        .content {
+            margin-left: 250px;
+            padding: 90px 20px 20px 20px;
+            /* leaves space for navbar */
+        }
 
-    .bg-user-header {
-        background-color: rgb(58, 148, 208) !important;
-        /* A green shade; change to any color you like */
-        color: white;
-    }
+        .bg-user-header {
+            background-color: rgb(58, 148, 208) !important;
+            /* A green shade; change to any color you like */
+            color: white;
+        }
 
-    .table thead {
-        background-color: rgb(58, 148, 208);
-        color: white;
-    }
+        .table thead {
+            background-color: rgb(58, 148, 208);
+            color: white;
+        }
 
-    .search-box {
-        max-width: 300px;
-    }
+        .search-box {
+            max-width: 300px;
+        }
 
-    /* Show dropdown on hover */
-    .content-dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0;
-    }
+        /* Show dropdown on hover */
+        .content-dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-    
+
     <?php include 'sidebar.php'; ?>
+
+    <?php if (isset($_GET['status'])): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                <?php if ($_GET['status'] === 'added'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'User Added',
+                        text: 'A new user has been successfully added.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php elseif ($_GET['status'] === 'updated'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'User Updated',
+                        text: 'The user information has been successfully updated.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php elseif ($_GET['status'] === 'deactivated'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'User Deactivated',
+                        text: 'The user has been successfully deactivated.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php elseif ($_GET['status'] === 'duplicate'): ?>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Duplicate Username',
+                        text: 'That username already exists. Please try another.',
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                <?php endif; ?>
+                });
+        </script>
+    <?php endif; ?>
 
     <!-- Main content -->
     <div class="content">
@@ -110,7 +152,7 @@ require_once "dbconn.php";
 
                 <!-- Table -->
                 <div class="card-body table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
+                    <table class="table table-hover table-bordered align-middle" id="userTable">
                         <thead>
                             <tr>
                                 <th>No.</th>
@@ -121,27 +163,27 @@ require_once "dbconn.php";
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="userTable">
+                        <tbody>
                             <?php
-                                $result = $conn->query("SELECT * FROM users");
-                                $count = 1;
-                                
-                                while ($row = $result->fetch_assoc()) {
-                                    echo "<tr >";
-                                    echo "<td>" . $count++ . "</td>";
-                                    echo "<td>" . htmlspecialchars($row['lastname']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row['firstname']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row['middlename']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($row['role']) . "</td>";
-                                    echo '<td align="center">
+                            $result = $conn->query("SELECT * FROM users WHERE status = 'active'");
+                            $count = 1;
+
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr >";
+                                echo "<td>" . $count++ . "</td>";
+                                echo "<td>" . htmlspecialchars($row['lastname']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['firstname']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['middlename']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['role']) . "</td>";
+                                echo '<td align="center">
                                             <a href="#" 
                                                 class="btn btn-sm btn-secondary" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#viewUserModal"
-                                                data-fullname="' . htmlspecialchars($row['lastname'] . ', ' . $row['firstname'] . ' ' . $row['middlename']) .'"
-                                                data-role= '. htmlspecialchars($row['role']) .'
-                                                data-username= '. htmlspecialchars($row['username']).'
-                                                data-password= '. htmlspecialchars($row['password']).'>
+                                                data-fullname="' . htmlspecialchars($row['lastname'] . ', ' . $row['firstname'] . ' ' . $row['middlename']) . '"
+                                                data-role= ' . htmlspecialchars($row['role']) . '
+                                                data-username= ' . htmlspecialchars($row['username']) . '
+                                                data-password= ' . htmlspecialchars($row['password']) . '>
                                                     <i class="bi bi-eye-fill"></i>
                                             </a>
                                             <button 
@@ -149,12 +191,12 @@ require_once "dbconn.php";
                                                 class="btn btn-sm btn-warning"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#editUserModal"
-                                                data-user_id="'. $row['user_id'] . '"
-                                                data-firstname="'. htmlspecialchars($row['firstname']).'"
-                                                data-lastname="'. htmlspecialchars($row['lastname']).'"
-                                                data-middlename="'. htmlspecialchars($row['middlename']).'"
-                                                data-role='. htmlspecialchars($row['role']).'
-                                                data-username="'. htmlspecialchars($row['username']).'">
+                                                data-user_id="' . $row['user_id'] . '"
+                                                data-firstname="' . htmlspecialchars($row['firstname']) . '"
+                                                data-lastname="' . htmlspecialchars($row['lastname']) . '"
+                                                data-middlename="' . htmlspecialchars($row['middlename']) . '"
+                                                data-role=' . htmlspecialchars($row['role']) . '
+                                                data-username="' . htmlspecialchars($row['username']) . '">
                                                     <i class="bi bi-pencil text-white"></i>
                                             </button>
                                             <button 
@@ -168,9 +210,9 @@ require_once "dbconn.php";
                                         </td>';
 
 
-                                    echo "</tr>";
-                                }                
-                                ?>
+                                echo "</tr>";
+                            }
+                            ?>
                         </tbody>
 
                     </table>
@@ -196,13 +238,13 @@ require_once "dbconn.php";
 
                         <!-- First Name -->
                         <div class="col-md-4">
-                            <label for="firstname" class="form-label">First Name</label>
+                            <label for="firstname" class="form-label">First Name*</label>
                             <input type="text" class="form-control" name="firstname" required>
                         </div>
 
                         <!-- Last Name -->
                         <div class="col-md-4">
-                            <label for="lastname" class="form-label">Last Name</label>
+                            <label for="lastname" class="form-label">Last Name*</label>
                             <input type="text" class="form-control" name="lastname" required>
                         </div>
 
@@ -214,19 +256,19 @@ require_once "dbconn.php";
 
                         <!-- Username -->
                         <div class="col-md-6">
-                            <label for="username" class="form-label">Username</label>
+                            <label for="username" class="form-label">Username*</label>
                             <input type="text" class="form-control" name="username">
                         </div>
 
                         <!-- Password -->
                         <div class="col-md-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" required>
+                            <label for="password" class="form-label">Password*</label>
+                            <input type="password" class="form-control" name="password" minlength="8" maxlength="16" required>
                         </div>
 
                         <!-- Role -->
                         <div class="col-md-3">
-                            <label for="role" class="form-label">Role</label>
+                            <label for="role" class="form-label">Role*</label>
                             <select class="form-select" name="role">
                                 <option value="Admin">Admin</option>
                                 <option value="Staff">Staff</option>
@@ -248,68 +290,61 @@ require_once "dbconn.php";
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-
-    <!-- Search Name and ID only -->
+    <!-- Search functionality -->
     <script>
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#userTable tr');
+        const searchInput = document.getElementById('searchInput');
+        const userRows = document.querySelectorAll('#userTable tbody tr');
 
-        rows.forEach(row => {
-            // Skip header row
-            if (row.querySelector('th')) return;
-
-            const idCell = row.cells[0];
-            const lastNameCell = row.cells[1];
-            const firstNameCell = row.cells[2];
-            const roleCell = row.cells[4];
-
-            const idText = idCell?.textContent.toLowerCase() || '';
-            const lastNameText = lastNameCell?.textContent.toLowerCase() || '';
-            const firstNameText = firstNameCell?.textContent.toLowerCase() || '';
-            const roleText = roleCell?.textContent.toLowerCase() || '';
-
-            const matchFound = idText.includes(filter) || lastNameText.includes(filter) || firstNameText
-                .includes(filter) || roleText.includes(filter);
-
-            if (matchFound) {
-                row.style.display = '';
-
-                // Highlight matches
-                [idCell, lastNameCell, firstNameCell, roleCell].forEach(cell => {
-                    const originalText = cell.textContent;
-                    const regex = new RegExp(`(${filter})`, 'gi');
-                    cell.innerHTML = originalText.replace(regex, `<mark>$1</mark>`);
-                });
-            } else {
-                row.style.display = 'none';
-            }
-
-            // Clear previous highlights if input is empty
-            if (!filter) {
-                [idCell, lastNameCell, firstNameCell, roleCell].forEach(cell => {
-                    cell.innerHTML = cell.textContent;
-                });
-            }
+        // Store original row HTML
+        const rowCache = new Map();
+        userRows.forEach((row, i) => {
+            rowCache.set(i, row.innerHTML);
         });
-    });
+
+        searchInput.addEventListener('input', function () {
+            const filter = this.value.toLowerCase().trim();
+
+            userRows.forEach((row, i) => {
+                row.innerHTML = rowCache.get(i); // Reset original row HTML
+
+                // Combine text from searchable cells (0 to 4)
+                let rowText = '';
+                for (let j = 0; j < row.cells.length - 1; j++) {
+                    rowText += row.cells[j].textContent.toLowerCase() + ' ';
+                }
+
+                const match = rowText.includes(filter);
+                row.style.display = match ? '' : 'none';
+
+                // Highlight matching text (except Actions)
+                if (match && filter) {
+                    for (let j = 0; j < row.cells.length - 1; j++) {
+                        const cell = row.cells[j];
+                        const originalText = cell.textContent;
+                        const regex = new RegExp(`(${filter})`, 'gi');
+                        cell.innerHTML = originalText.replace(regex, `<mark>$1</mark>`);
+                    }
+                }
+            });
+        });
     </script>
 
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var viewModal = document.getElementById('viewUserModal');
-        viewModal.addEventListener('show.bs.modal', function(event) {
-            var button = event.relatedTarget;
+        document.addEventListener('DOMContentLoaded', function () {
+            var viewModal = document.getElementById('viewUserModal');
+            viewModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
 
-            var fullname = button.getAttribute('data-fullname');
-            var username = button.getAttribute('data-username');
-            var role = button.getAttribute('data-role');
+                var fullname = button.getAttribute('data-fullname');
+                var username = button.getAttribute('data-username');
+                var role = button.getAttribute('data-role');
 
-            document.getElementById('viewFullname').textContent = fullname;
-            document.getElementById('viewUsername').textContent = username;
-            document.getElementById('viewRole').textContent = role;
+                document.getElementById('viewFullname').textContent = fullname;
+                document.getElementById('viewUsername').textContent = username;
+                document.getElementById('viewRole').textContent = role;
+            });
         });
-    });
     </script>
 
 
@@ -385,11 +420,11 @@ require_once "dbconn.php";
                         <input type="hidden" name="user_id" id="editUserId">
 
                         <div class="col-md-4">
-                            <label class="form-label">First Name</label>
+                            <label class="form-label">First Name*</label>
                             <input type="text" class="form-control" name="firstname" id="editFirstname" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Last Name</label>
+                            <label class="form-label">Last Name*</label>
                             <input type="text" class="form-control" name="lastname" id="editLastname" required>
                         </div>
                         <div class="col-md-4">
@@ -397,7 +432,7 @@ require_once "dbconn.php";
                             <input type="text" class="form-control" name="middlename" id="editMiddlename">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Username</label>
+                            <label class="form-label">Username*</label>
                             <input type="text" class="form-control" name="username" id="editUsername" required>
                         </div>
                         <div class="col-md-3">
@@ -410,7 +445,7 @@ require_once "dbconn.php";
                             </label>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Role</label>
+                            <label class="form-label">Role*</label>
                             <select class="form-select" name="role" required>
                                 <option value="Admin">Admin</option>
                                 <option selected value="Staff">Staff</option>
@@ -426,13 +461,13 @@ require_once "dbconn.php";
         </div>
     </div>
 
-    
+
 
     <!-- Script for diplaying data -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var viewModal = document.getElementById('viewUserModal');
-            viewModal.addEventListener('show.bs.modal', function(event) {
+            viewModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
 
                 var fullname = button.getAttribute('data-fullname');
@@ -447,7 +482,7 @@ require_once "dbconn.php";
             });
 
             // Show/hide password toggle
-            document.getElementById('togglePassword').addEventListener('click', function() {
+            document.getElementById('togglePassword').addEventListener('click', function () {
                 const passwordInput = document.getElementById('viewPassword');
                 const icon = this.querySelector('i');
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -459,22 +494,22 @@ require_once "dbconn.php";
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var editModal = document.getElementById('editUserModal');
-        editModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
+        document.addEventListener('DOMContentLoaded', function () {
+            var editModal = document.getElementById('editUserModal');
+            editModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
 
-            document.getElementById('editUserId').value = button.getAttribute('data-user_id');
-            document.getElementById('editFirstname').value = button.getAttribute('data-firstname');
-            document.getElementById('editLastname').value = button.getAttribute('data-lastname');
-            document.getElementById('editMiddlename').value = button.getAttribute('data-middlename');
-            document.getElementById('editUsername').value = button.getAttribute('data-username');
-            document.getElementById('editPassword').value = button.getAttribute('data-password');
-            document.getElementById('editRole').value = button.getAttribute('data-role');
-        });
+                document.getElementById('editUserId').value = button.getAttribute('data-user_id');
+                document.getElementById('editFirstname').value = button.getAttribute('data-firstname');
+                document.getElementById('editLastname').value = button.getAttribute('data-lastname');
+                document.getElementById('editMiddlename').value = button.getAttribute('data-middlename');
+                document.getElementById('editUsername').value = button.getAttribute('data-username');
+                document.getElementById('editPassword').value = button.getAttribute('data-password');
+                document.getElementById('editRole').value = button.getAttribute('data-role');
+            });
 
-        // Show/hide password toggle
-            document.getElementById('togglePass').addEventListener('click', function() {
+            // Show/hide password toggle
+            document.getElementById('togglePass').addEventListener('click', function () {
                 const passwordInput = document.getElementById('editPassword');
                 const icon = this.querySelector('i');
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -487,12 +522,12 @@ require_once "dbconn.php";
 
     <!-- addUserModal.adminusers -->
     <?php if (isset($_GET['add']) && $_GET['add'] == 'true'): ?>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
-            addUserModal.show();
-        });
-    </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
+                addUserModal.show();
+            });
+        </script>
     <?php endif; ?>
 
 </body>

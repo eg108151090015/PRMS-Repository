@@ -59,7 +59,7 @@ if (!empty($patient_id)) {
             $stmt->bind_param("is", $user_id, $action);
             $stmt->execute();
 
-            header("Location: viewpatient.php?patient_id=" . $patient_id . "&status=updated");
+            header("Location: adminpatient.php?status=updated&patient_id=" . $patient_id);
             exit();
         } else {
             echo "Error updating record: " . $conn->error;
@@ -92,7 +92,7 @@ if ($query->execute()) {
     $stmt->bind_param("is", $user_id, $action);
     $stmt->execute();
 
-    header("Location: viewpatient.php?patient_id=" . $new_patient_id . "&status=added");
+    header("Location: adminpatient.php?status=added&patient_id=" . $new_patient_id);
     exit();
 } else {
     echo "Error inserting record: " . $query->error;

@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['patient_id'])) {
 
     if ($result->num_rows === 0) {
         $_SESSION['message'] = "Patient not found.";
-        header("Location: adminpatient.php");
+        header("Location: staffpatient.php");
         exit();
     }
 
@@ -71,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['patient_id'])) {
     $stmt->execute();
 
     $_SESSION['message'] = "Patient archived successfully.";
-    header("Location: staffpatient.php");
+    header("Location: staffpatient.php?status=archived&patient_id=" . $patient_id);
     exit();
 }
 

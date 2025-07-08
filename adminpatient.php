@@ -22,69 +22,103 @@ require_once "dbconn.php";
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-    body {
-        overflow-x: hidden;
-        background-color: #f2f2f2;
-    }
+        body {
+            overflow-x: hidden;
+            background-color: #f2f2f2;
+        }
 
-    /* Navbar styling */
-    .bg-custom {
-        background-color: #3498db !important;
-    }
+        /* Navbar styling */
+        .bg-custom {
+            background-color: #3498db !important;
+        }
 
-    /* Sidebar styling */
-    .bg-sidebar-custom {
-        background-color: rgb(52, 52, 65) !important;
-    }
+        /* Sidebar styling */
+        .bg-sidebar-custom {
+            background-color: rgb(52, 52, 65) !important;
+        }
 
-    .nav-link {
-        color: white;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
+        .nav-link {
+            color: white;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-    .nav-link:hover {
-        background-color: rgb(25, 90, 134);
-        color: white;
-    }
+        .nav-link:hover {
+            background-color: rgb(25, 90, 134);
+            color: white;
+        }
 
-    .nav-link.active {
-        background-color: white !important;
-        color: black !important;
-        font-weight: bold;
-    }
+        .nav-link.active {
+            background-color: white !important;
+            color: black !important;
+            font-weight: bold;
+        }
 
-    .content {
-        margin-left: 250px;
-        padding: 90px 20px 20px 20px;
-        /* leaves space for navbar */
-    }
+        .content {
+            margin-left: 250px;
+            padding: 90px 20px 20px 20px;
+            /* leaves space for navbar */
+        }
 
-    .bg-patient-header {
-        background-color: rgb(58, 148, 208) !important;
-        /* A green shade; change to any color you like */
-        color: white;
-    }
+        .bg-patient-header {
+            background-color: rgb(58, 148, 208) !important;
+            /* A green shade; change to any color you like */
+            color: white;
+        }
 
-    .table thead {
-        background-color: rgb(58, 148, 208);
-        color: white;
-    }
+        .table thead {
+            background-color: rgb(58, 148, 208);
+            color: white;
+        }
 
-    .search-box {
-        max-width: 300px;
-    }
+        .search-box {
+            max-width: 300px;
+        }
 
-    /* Show dropdown on hover */
-    .content-dropdown:hover .dropdown-menu {
-        display: block;
-        margin-top: 0;
-    }
+        /* Show dropdown on hover */
+        .content-dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
     </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
 
     <?php include 'sidebar.php'; ?>
+
+    <?php if (isset($_GET['status'])): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                <?php if ($_GET['status'] === 'added'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Patient Added',
+                        text: 'The patient record has been successfully added.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php elseif ($_GET['status'] === 'updated'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Patient Updated',
+                        text: 'The patient record has been successfully updated.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php elseif ($_GET['status'] === 'archived'): ?>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Patient Archived',
+                        text: 'The patient has been successfully archived.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                <?php endif; ?>
+            });
+        </script>
+    <?php endif; ?>
 
     <!-- Main content -->
     <div class="content">
@@ -107,7 +141,7 @@ require_once "dbconn.php";
 
                 <!-- Table -->
                 <div class="card-body table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
+                    <table class="table table-hover table-bordered align-middle" id="patientTable">
                         <thead>
                             <tr>
                                 <th>No.</th>
@@ -123,27 +157,66 @@ require_once "dbconn.php";
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="patientTable">
+                        <tbody>
                             <?php
-                $result = $conn->query("SELECT * FROM patients");
-                $count = 1;
-                
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr >";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . $count++ . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['last_name']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['first_name']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['middle_name']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['gender']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['date_of_birth']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['age']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['contact_number']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['email_address']) . "</td>";
-                    echo "<td onclick=\"window.location='viewpatient.php?patient_id=" . $row['patient_id'] . "'\" style=\"cursor:pointer;\">" . htmlspecialchars($row['created_at']) . "</td>";
-                    echo '<td>
-                            <a href="viewpatient.php?patient_id=' . $row['patient_id'] . '&edit=true" class="btn btn-sm btn-warning text-white">
-                                <i class="bi bi-pencil"></i>
+                            $result = $conn->query("SELECT * FROM patients");
+                            $count = 1;
+
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr >";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . $count++ . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['last_name']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['first_name']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['middle_name']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['gender']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['date_of_birth']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['age']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['contact_number']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['email_address']) . "</td>";
+                                echo "<td patient_id=" . $row['patient_id'] . "'\" >" . htmlspecialchars($row['created_at']) . "</td>";
+                                echo '<td>
+
+                            <a href="#" class="btn btn-sm btn-secondary view-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#viewPatientModal"
+                                data-fullname="' . htmlspecialchars($row['last_name'] . ', ' . $row['first_name'] . ' ' . $row['middle_name']) . '"
+                                data-gender="' . htmlspecialchars($row['gender']) . '"
+                                data-birthdate="' . htmlspecialchars($row['date_of_birth']) . '"
+                                data-age="' . htmlspecialchars($row['age']) . '"
+                                data-contact="' . htmlspecialchars($row['contact_number']) . '"
+                                data-email="' . htmlspecialchars($row['email_address']) . '"
+                                data-created="' . htmlspecialchars($row['created_at']) . '"
+                                data-address="' . htmlspecialchars($row['address']) . '"
+                                data-birthplace="' . htmlspecialchars($row['birth_place']) . '"
+                                data-nationality="' . htmlspecialchars($row['nationality']) . '"
+                                data-religion="' . htmlspecialchars($row['religion']) . '"
+                                data-occupation="' . htmlspecialchars($row['occupation']) . '"
+                                data-civilstatus="' . htmlspecialchars($row['civil_status']) . '">
+                                <i class="bi bi-eye-fill"></i>
                             </a>
+
+                            <button type="button"
+                                class="btn btn-sm btn-warning text-white edit-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editPatientModal"
+                                data-patient-id="' . htmlspecialchars($row['patient_id']) . '"
+                                data-first-name="' . htmlspecialchars($row['first_name']) . '"
+                                data-last-name="' . htmlspecialchars($row['last_name']) . '"
+                                data-middle-name="' . htmlspecialchars($row['middle_name']) . '"
+                                data-address="' . htmlspecialchars($row['address']) . '"
+                                data-age="' . htmlspecialchars($row['age']) . '"
+                                data-date-of-birth="' . htmlspecialchars($row['date_of_birth']) . '"
+                                data-birth-place="' . htmlspecialchars($row['birth_place']) . '"
+                                data-nationality="' . htmlspecialchars($row['nationality']) . '"
+                                data-religion="' . htmlspecialchars($row['religion']) . '"
+                                data-occupation="' . htmlspecialchars($row['occupation']) . '"
+                                data-civil-status="' . htmlspecialchars($row['civil_status']) . '"
+                                data-gender="' . htmlspecialchars($row['gender']) . '"
+                                data-contact-number="' . htmlspecialchars($row['contact_number']) . '"
+                                data-email-address="' . htmlspecialchars($row['email_address']) . '">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
                             <button 
                                 type="button"
                                 class="btn btn-sm btn-secondary"
@@ -154,9 +227,9 @@ require_once "dbconn.php";
                             </button>
                         </td>';
 
-                    echo "</tr>";
-                }                
-                ?>
+                                echo "</tr>";
+                            }
+                            ?>
                         </tbody>
 
                     </table>
@@ -181,12 +254,12 @@ require_once "dbconn.php";
                     <div class="modal-body row g-3">
                         <!-- Form Fields (adjust IDs/names as needed) -->
                         <div class="col-md-4">
-                            <label for="first_name" class="form-label">First Name</label>
+                            <label for="first_name" class="form-label">First Name*</label>
                             <input type="text" class="form-control" name="first_name" required>
                         </div>
 
                         <div class="col-md-4">
-                            <label for="last_name" class="form-label">Last Name</label>
+                            <label for="last_name" class="form-label">Last Name*</label>
                             <input type="text" class="form-control" name="last_name" required>
                         </div>
 
@@ -196,31 +269,30 @@ require_once "dbconn.php";
                         </div>
 
                         <div class="col-md-6">
-                            <label for="address" class="form-label">Address</label>
-                            <input type="text" class="form-control" name="address">
+                            <label for="address" class="form-label">Address*</label>
+                            <textarea type="text" class="form-control" name="address" rows="2" required></textarea>
                         </div>
 
                         <div class="col-md-3">
-                            <label for="date_of_birth" class="form-label">Date of Birth</label>
+                            <label for="date_of_birth" class="form-label">Date of Birth*</label>
                             <input type="date" class="form-control" name="date_of_birth" required>
                         </div>
 
                         <div class="col-md-3">
                             <label for="birth_place" class="form-label">Birth Place</label>
-                            <input type="text" class="form-control" name="birth_place">
+                            <textarea type="text" class="form-control" name="birth_place" rows="2"></textarea>
                         </div>
 
                         <div class="col-md-3">
-                            <label for="civil_status" class="form-label">Civil Status</label>
+                            <label for="civil_status" class="form-label">Civil Status*</label>
                             <select class="form-select" name="civil_status">
                                 <option value="Single">Single</option>
                                 <option value="Married">Married</option>
-                                <option value="Widowed">Widowed</option>
                             </select>
                         </div>
 
                         <div class="col-md-3">
-                            <label for="gender" class="form-label">Gender</label>
+                            <label for="gender" class="form-label">Gender*</label>
                             <select class="form-select" name="gender">
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
@@ -228,8 +300,8 @@ require_once "dbconn.php";
                         </div>
 
                         <div class="col-md-3">
-                            <label for="contact_number" class="form-label">Contact Number</label>
-                            <input type="text" class="form-control" name="contact_number">
+                            <label for="contact_number" class="form-label">Contact Number*</label>
+                            <input type="text" class="form-control" name="contact_number" required>
                         </div>
 
                         <div class="col-md-3">
@@ -267,48 +339,41 @@ require_once "dbconn.php";
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
-    <!-- Search Name and ID only -->
+    <!-- Search Name and ID... -->
     <script>
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#patientTable tr');
+        // Store original HTML content on page load
+        const rowMap = new Map();
 
-        rows.forEach(row => {
-            // Skip header row
-            if (row.querySelector('th')) return;
-
-            const idCell = row.cells[0];
-            const lastNameCell = row.cells[1];
-            const firstNameCell = row.cells[2];
-
-            const idText = idCell?.textContent.toLowerCase() || '';
-            const lastNameText = lastNameCell?.textContent.toLowerCase() || '';
-            const firstNameText = firstNameCell?.textContent.toLowerCase() || '';
-
-            const matchFound = idText.includes(filter) || lastNameText.includes(filter) || firstNameText
-                .includes(filter);
-
-            if (matchFound) {
-                row.style.display = '';
-
-                // Highlight matches
-                [idCell, lastNameCell, firstNameCell].forEach(cell => {
-                    const originalText = cell.textContent;
-                    const regex = new RegExp(`(${filter})`, 'gi');
-                    cell.innerHTML = originalText.replace(regex, `<mark>$1</mark>`);
-                });
-            } else {
-                row.style.display = 'none';
-            }
-
-            // Clear previous highlights if input is empty
-            if (!filter) {
-                [idCell, lastNameCell, firstNameCell].forEach(cell => {
-                    cell.innerHTML = cell.textContent;
-                });
-            }
+        document.querySelectorAll('#patientTable tbody tr').forEach((row, index) => {
+            rowMap.set(index, row.innerHTML); // Save original row content
         });
-    });
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const filter = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#patientTable tbody tr');
+
+            rows.forEach((row, index) => {
+                // Reset row content before re-highlighting
+                row.innerHTML = rowMap.get(index);
+
+                const rowText = row.innerText.toLowerCase();
+                const matchFound = rowText.includes(filter);
+
+                row.style.display = matchFound ? '' : 'none';
+
+                // Highlight matching text except in Actions column (last cell)
+                if (matchFound && filter) {
+                    Array.from(row.cells).forEach((cell, i) => {
+                        // Don't highlight the Actions column (last column)
+                        if (i === row.cells.length - 1) return;
+
+                        const originalText = cell.textContent;
+                        const regex = new RegExp(`(${filter})`, 'gi');
+                        cell.innerHTML = originalText.replace(regex, '<mark>$1</mark>');
+                    });
+                }
+            });
+        });
     </script>
 
 
@@ -328,7 +393,7 @@ require_once "dbconn.php";
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Yes, Archive</button>
+                        <button type="submit" class="btn btn-danger">Archive</button>
                     </div>
                 </div>
             </form>
@@ -347,126 +412,103 @@ require_once "dbconn.php";
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <input type="hidden" name="patient_id" value="<?= $patient_id ?>">
+                        <input type="hidden" name="patient_id" id="editPatientId">
                         <div class="row">
 
                             <!-- First Name -->
                             <div class="col-md-4 mb-3">
-                                <label for="first_name" class="form-label">First Name</label>
-                                <input type="text" class="form-control" name="first_name"
-                                    value="<?= htmlspecialchars($patient['first_name']) ?>" required>
+                                <label for="first_name" class="form-label">First Name*</label>
+                                <input type="text" class="form-control" name="first_name" id="editFirstName" required>
                             </div>
 
                             <!-- Last Name -->
                             <div class="col-md-4 mb-3">
-                                <label for="last_name" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" name="last_name"
-                                    value="<?= htmlspecialchars($patient['last_name']) ?>" required>
+                                <label for="last_name" class="form-label">Last Name*</label>
+                                <input type="text" class="form-control" name="last_name" id="editLastName" required>
                             </div>
 
                             <!-- Middle Name -->
                             <div class="col-md-4 mb-3">
                                 <label for="middle_name" class="form-label">Middle Name</label>
-                                <input type="text" class="form-control" name="middle_name"
-                                    value="<?= htmlspecialchars($patient['middle_name']) ?>">
+                                <input type="text" class="form-control" name="middle_name" id="editMiddleName">
                             </div>
 
                             <!-- Address -->
                             <div class="col-md-6 mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" name="address"
-                                    value="<?= htmlspecialchars($patient['address']) ?>">
+                                <label for="address" class="form-label">Address*</label>
+                                <textarea class="form-control" name="address" id="editAddress" rows="2" required></textarea>
                             </div>
 
                             <!-- Age -->
                             <div class="col-md-2 mb-3">
                                 <label for="age" class="form-label">Age</label>
-                                <input type="number" class="form-control" name="age"
-                                    value="<?= htmlspecialchars($patient['age']) ?>">
+                                <input type="number" class="form-control" name="age" id="editAge" readonly>
                             </div>
 
                             <!-- Date of Birth -->
                             <div class="col-md-4 mb-3">
-                                <label for="date_of_birth" class="form-label">Date of Birth</label>
-                                <input type="date" class="form-control" name="date_of_birth"
-                                    value="<?= htmlspecialchars($patient['date_of_birth']) ?>">
+                                <label for="date_of_birth" class="form-label">Date of Birth*</label>
+                                <input type="date" class="form-control" name="date_of_birth" id="editDateOfBirth"
+                                    required>
                             </div>
 
                             <!-- Birth Place -->
                             <div class="col-md-4 mb-3">
                                 <label for="birth_place" class="form-label">Birth Place</label>
-                                <input type="text" class="form-control" name="birth_place"
-                                    value="<?= htmlspecialchars($patient['birth_place']) ?>">
+                                <textarea class="form-control" name="birth_place" id="editBirthPlace"
+                                    rows="2"></textarea>
                             </div>
 
                             <!-- Nationality -->
                             <div class="col-md-4 mb-3">
                                 <label for="nationality" class="form-label">Nationality</label>
-                                <input type="text" class="form-control" name="nationality"
-                                    value="<?= htmlspecialchars($patient['nationality']) ?>">
+                                <input type="text" class="form-control" name="nationality" id="editNationality">
                             </div>
 
                             <!-- Religion -->
                             <div class="col-md-4 mb-3">
                                 <label for="religion" class="form-label">Religion</label>
-                                <input type="text" class="form-control" name="religion"
-                                    value="<?= htmlspecialchars($patient['religion']) ?>">
+                                <input type="text" class="form-control" name="religion" id="editReligion">
                             </div>
 
                             <!-- Occupation -->
                             <div class="col-md-6 mb-3">
                                 <label for="occupation" class="form-label">Occupation</label>
-                                <input type="text" class="form-control" name="occupation"
-                                    value="<?= htmlspecialchars($patient['occupation']) ?>">
+                                <input type="text" class="form-control" name="occupation" id="editOccupation">
                             </div>
 
                             <!-- Civil Status -->
                             <div class="col-md-3 mb-3">
-                                <label for="civil_status" class="form-label">Civil Status</label>
+                                <label for="civil_status" class="form-label">Civil Status*</label>
                                 <select class="form-select" name="civil_status">
-                                    <option value="Single"
-                                        <?= $patient['civil_status'] == 'Single' ? 'selected' : '' ?>>
+                                    <option id="editCivilStatus">
                                         Single</option>
-                                    <option value="Married"
-                                        <?= $patient['civil_status'] == 'Married' ? 'selected' : '' ?>>
+                                    <option id="editCivilStatus">
                                         Married</option>
-                                    <option value="Widowed"
-                                        <?= $patient['civil_status'] == 'Widowed' ? 'selected' : '' ?>>
-                                        Widowed</option>
-                                    <option value="Separated"
-                                        <?= $patient['civil_status'] == 'Separated' ? 'selected' : '' ?>>
-                                        Separated</option>
-                                    <option value="Divorced"
-                                        <?= $patient['civil_status'] == 'Divorced' ? 'selected' : '' ?>>
-                                        Divorced</option>
                                 </select>
                             </div>
 
                             <!-- Gender -->
                             <div class="col-md-3 mb-3">
-                                <label for="gender" class="form-label">Gender</label>
+                                <label for="gender" class="form-label">Gender*</label>
                                 <select class="form-select" name="gender">
-                                    <option value="Male" <?= $patient['gender'] == 'Male' ? 'selected' : '' ?>>Male
+                                    <option id="editGender">Male
                                     </option>
-                                    <option value="Female" <?= $patient['gender'] == 'Female' ? 'selected' : '' ?>>
+                                    <option id="editGender">
                                         Female</option>
-                                    <option value="Other" <?= $patient['gender'] == 'Other' ? 'selected' : '' ?>>
-                                        Other</option>
                                 </select>
                             </div>
 
                             <!-- Contact Number -->
                             <div class="col-md-6 mb-3">
-                                <label for="contact_number" class="form-label">Contact Number</label>
-                                <input type="text" class="form-control" name="contact_number"
-                                    value="<?= htmlspecialchars($patient['contact_number']) ?>">
+                                <label for="contact_number" class="form-label">Contact Number*</label>
+                                <input type="text" class="form-control" name="contact_number" id="editContactNumber" required>
                             </div>
 
                             <!-- Email Address -->
                             <div class="col-md-6 mb-3">
                                 <label for="email_address" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" name="email_address"
-                                    value="<?= htmlspecialchars($patient['email_address']) ?>">
+                                <input type="email" class="form-control" name="email_address" id="editEmailAddress">
                             </div>
                         </div>
                     </div>
@@ -475,6 +517,86 @@ require_once "dbconn.php";
                         <button type="submit" class="btn btn-success">Save Changes</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Patient Modal -->
+    <div class="modal fade" id="viewPatientModal" tabindex="-1" aria-labelledby="viewPatientModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Large size for more content -->
+            <div class="modal-content">
+                <div class="modal-header bg-custom text-white fw-bold">
+                    <h5 class="modal-title" id="viewPatientModalLabel">Patient Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Each field styled like User Modal -->
+                    <div class="mb-3">
+                        <label class="form-label">Full Name:</label>
+                        <p class="fw-bold mb-0" id="viewFullname"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Gender:</label>
+                        <p class="fw-bold mb-0" id="viewGender"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Birthdate:</label>
+                        <p class="fw-bold mb-0" id="viewBirthdate"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Age:</label>
+                        <p class="fw-bold mb-0" id="viewAge"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contact Number:</label>
+                        <p class="fw-bold mb-0" id="viewContact"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email:</label>
+                        <p class="fw-bold mb-0" id="viewEmail"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Address:</label>
+                        <p class="fw-bold mb-0" id="viewAddress" style="white-space: pre-wrap;"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Birth Place:</label>
+                        <p class="fw-bold mb-0" id="viewBirthPlace" style="white-space: pre-wrap;"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nationality:</label>
+                        <p class="fw-bold mb-0" id="viewNationality"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Religion:</label>
+                        <p class="fw-bold mb-0" id="viewReligion"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Occupation:</label>
+                        <p class="fw-bold mb-0" id="viewOccupation"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Civil Status:</label>
+                        <p class="fw-bold mb-0" id="viewCivilStatus"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date Admitted:</label>
+                        <p class="fw-bold mb-0" id="viewCreated"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -494,14 +616,60 @@ require_once "dbconn.php";
     </script>
     -->
 
-    <!-- addPatientModal.viewpatient -->
-    <?php if (isset($_GET['add']) && $_GET['add'] == 'true'): ?>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var addPatientModal = new bootstrap.Modal(document.getElementById('addPatientModal'));
-            addPatientModal.show();
+            document.querySelectorAll('.view-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    document.getElementById('viewFullname').textContent = this.getAttribute('data-fullname');
+                    document.getElementById('viewGender').textContent = this.getAttribute('data-gender');
+                    document.getElementById('viewBirthdate').textContent = this.getAttribute('data-birthdate');
+                    document.getElementById('viewAge').textContent = this.getAttribute('data-age');
+                    document.getElementById('viewContact').textContent = this.getAttribute('data-contact');
+                    document.getElementById('viewEmail').textContent = this.getAttribute('data-email');
+                    document.getElementById('viewAddress').textContent = this.getAttribute('data-address');
+                    document.getElementById('viewBirthPlace').textContent = this.getAttribute('data-birthplace');
+                    document.getElementById('viewNationality').textContent = this.getAttribute('data-nationality');
+                    document.getElementById('viewReligion').textContent = this.getAttribute('data-religion');
+                    document.getElementById('viewOccupation').textContent = this.getAttribute('data-occupation');
+                    document.getElementById('viewCivilStatus').textContent = this.getAttribute('data-civilstatus');
+                    document.getElementById('viewCreated').textContent = this.getAttribute('data-created');
+                });
+            });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    document.getElementById('editPatientId').value = this.getAttribute('data-patient-id');
+                    document.getElementById('editFirstName').value = this.getAttribute('data-first-name');
+                    document.getElementById('editLastName').value = this.getAttribute('data-last-name');
+                    document.getElementById('editMiddleName').value = this.getAttribute('data-middle-name');
+                    document.getElementById('editAddress').value = this.getAttribute('data-address');
+                    document.getElementById('editAge').value = this.getAttribute('data-age');
+                    document.getElementById('editDateOfBirth').value = this.getAttribute('data-date-of-birth');
+                    document.getElementById('editBirthPlace').value = this.getAttribute('data-birth-place');
+                    document.getElementById('editNationality').value = this.getAttribute('data-nationality');
+                    document.getElementById('editReligion').value = this.getAttribute('data-religion');
+                    document.getElementById('editOccupation').value = this.getAttribute('data-occupation');
+                    document.getElementById('editCivilStatus').value = this.getAttribute('data-civil-status');
+                    document.getElementById('editGender').value = this.getAttribute('data-gender');
+                    document.getElementById('editContactNumber').value = this.getAttribute('data-contact-number');
+                    document.getElementById('editEmailAddress').value = this.getAttribute('data-email-address');
+                });
+            });
+        });
+    </script>
+
+    <!-- addPatientModal.viewpatient -->
+    <?php if (isset($_GET['add']) && $_GET['add'] == 'true'): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var addPatientModal = new bootstrap.Modal(document.getElementById('addPatientModal'));
+                addPatientModal.show();
+            });
+        </script>
     <?php endif; ?>
 </body>
 

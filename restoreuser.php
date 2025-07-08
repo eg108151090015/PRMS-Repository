@@ -29,7 +29,7 @@ if ($result->num_rows === 0) {
 $archived = $result->fetch_assoc();
 
 // Insert back into users table
-$insert = $conn->prepare("
+/*$insert = $conn->prepare("
     INSERT INTO users (
         firstname, middlename, lastname, role, username, password
     ) VALUES (?, ?, ?, ?, ?, ?)
@@ -43,7 +43,11 @@ $insert->bind_param(
     $archived['username'],
     $archived['password']
 );
-$insert->execute();
+$insert->execute();*/
+
+$status = $conn->prepare("UPDATE users SET status = 'active' WHERE user_id = ?");
+$status->bind_param("i", $user_id);
+$status->execute();
 
 // Delete from archived_users table
 $delete = $conn->prepare("DELETE FROM archived_users WHERE user_id = ?");
@@ -60,6 +64,6 @@ $stmt->bind_param("is", $log_user_id, $action);
 $stmt->execute();
 
 // Redirect back to archived users page
-header("Location: archiveduser.php");
+header("Location: archiveduser.php?status=activated");
 exit();
 ?>

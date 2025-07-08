@@ -34,7 +34,7 @@ $checkUser->store_result();
 
 if ($checkUser->num_rows > 0) {
     $_SESSION['message'] = "Username already exists!";
-    header("Location: adduser.php");
+    header("Location: adminusers.php?status=duplicate");
     exit();
 }
 
@@ -75,7 +75,7 @@ if (!empty($user_id)) {
             $logStmt->execute();
 
             $_SESSION['message'] = "User updated successfully.";
-            header("Location: adminusers.php");
+            header("Location: adminusers.php?status=updated");
             exit();
         } else {
             echo "Error updating record: " . $conn->error;
@@ -93,7 +93,7 @@ if (!empty($user_id)) {
 // ---------------------
 if (empty($password)) {
     $_SESSION['message'] = "Password is required.";
-    header("Location: adduser.php");
+    header("Location: adminusers.php");
     exit();
 }
 
@@ -101,8 +101,8 @@ $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
 $query = $conn->prepare("
     INSERT INTO users (
-        firstname, lastname, middlename, username, password, role
-    ) VALUES (?, ?, ?, ?, ?, ?)
+        firstname, lastname, middlename, username, password, role, status
+    ) VALUES (?, ?, ?, ?, ?, ?, 'active')
 ");
 $query->bind_param("ssssss", $first, $last, $middle, $username, $hashedPassword, $role);
 
@@ -116,7 +116,7 @@ if ($query->execute()) {
     $logStmt->execute();
 
     $_SESSION['message'] = "User added successfully.";
-    header("Location: adminusers.php");
+    header("Location: adminusers.php?status=added");
     exit();
 } else {
     echo "Error inserting record: " . $query->error;
